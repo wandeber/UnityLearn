@@ -16,4 +16,10 @@ public class Enemy: MonoBehaviour {
   void Update() {
     rb.AddForce((player.transform.position - transform.position).normalized * speed * 0.1f);
   }
+
+  void FixedUpdate() {
+    if (transform.position.y < -20.0f) {
+      SpawnManager.instance.DestroyEnemy(gameObject);
+    }
+  }
 }
