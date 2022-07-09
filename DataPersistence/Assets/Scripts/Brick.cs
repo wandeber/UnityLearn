@@ -15,20 +15,17 @@ public class Brick : MonoBehaviour
         var renderer = GetComponentInChildren<Renderer>();
 
         MaterialPropertyBlock block = new MaterialPropertyBlock();
-        switch (PointValue)
-        {
-            case 1 :
-                block.SetColor("_BaseColor", Color.green);
-                break;
-            case 2:
-                block.SetColor("_BaseColor", Color.yellow);
-                break;
-            case 5:
-                block.SetColor("_BaseColor", Color.blue);
-                break;
-            default:
-                block.SetColor("_BaseColor", Color.red);
-                break;
+        if (PointValue < 3) {
+          block.SetColor("_BaseColor", Color.green);
+        }
+        else if (PointValue < 5) {
+          block.SetColor("_BaseColor", Color.yellow);
+        }
+        else if (PointValue < 7) {
+          block.SetColor("_BaseColor", Color.blue);
+        }
+        else {
+          block.SetColor("_BaseColor", Color.red);
         }
         renderer.SetPropertyBlock(block);
     }
