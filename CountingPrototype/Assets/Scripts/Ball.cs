@@ -14,6 +14,7 @@ public class Ball: MonoBehaviour {
   public bool isFlying = false;
   private Vector3 spinDirection;
   private float startForceFactor;
+  private float startForceFactorReduce = 0.05f;
 
   void Awake() {
     meshRenderer.enabled = false;
@@ -26,9 +27,10 @@ public class Ball: MonoBehaviour {
   }
 
   void Update() {
-    if (isFlying /*&& startForceFactor > 0.5f*/) {
+    if (isFlying && startForceFactor > 0f) {
       //rb.AddForce(spinDirection * rb.velocity.magnitude * 1f, ForceMode.Acceleration);
-      rb.AddForce(spinDirection * 1.5f * Mathf.Pow(1f+startForceFactor, 3f) * 0.3f, ForceMode.Acceleration);
+      rb.AddForce(spinDirection * 1.5f * Mathf.Pow(1f+startForceFactor, 10f) * Time.deltaTime, ForceMode.Acceleration);
+      startForceFactor -= startForceFactorReduce * Time.deltaTime;
     }
   }
 

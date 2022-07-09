@@ -5,27 +5,27 @@ using UnityEngine.UI;
 
 public class Target: MonoBehaviour {
   public Text CounterText;
-  private int Count = 0;
+  //private int Count = 0;
   private float maxMinX = 3.056f;
   private float maxY = 1.85f;
   private float minY = 0.6f;
 
   void Awake() {
-    Count = 0;
+    GameManager.Instance.score = 0;
     UpdateText();
     Move();
   }
 
   private void OnTriggerEnter(Collider other) {
-    if (GameManager.instance.gameActive) {
-      Count += 1;
+    if (GameManager.Instance.gameActive) {
+      GameManager.Instance.score += 1;
       UpdateText();
       Move();
     }
   }
 
   void UpdateText() {
-    CounterText.text = "Score: " + Count;
+    CounterText.text = "Score: " + GameManager.Instance.score;
   }
 
   public void Move() {

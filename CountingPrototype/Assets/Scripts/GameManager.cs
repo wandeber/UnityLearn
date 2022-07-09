@@ -5,22 +5,25 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameManager: MonoBehaviour {
-  public static GameManager instance;
+  public static GameManager Instance { get; private set; }
+
   [SerializeField] private float forceSelectorSpeed = 1f;
   [SerializeField] private Slider hForceSlider;
   [SerializeField] private Ball ball;
   [SerializeField] private GameObject mouse;
   [SerializeField] private int maxTime;
   [SerializeField] public Text TimeText;
+  [SerializeField] public Text HighscoreText;
   [SerializeField] public GameObject GameOverPanel;
-  public bool gameActive;
-  
-  private int remainingTime;
-  private Vector3 mousePosition;
 
+  public bool gameActive;
   public float maxforceFactor = 1f;
   public float forceTarget;
   public float forceSource;
+  public int score = 0;
+
+  private int remainingTime;
+  private Vector3 mousePosition;
   private Rigidbody rb;
   private float selectedForceFactor;
   private float currentForceFactor;
@@ -28,16 +31,21 @@ public class GameManager: MonoBehaviour {
   private float timeStartedSelectingForceFactor;
 
   void Awake() {
-    if (instance == null) {
-      instance = this;
-    } else {
+    if (Instance != null) {
       Destroy(gameObject);
+      return;
     }
+    Instance = this;
     rb = GetComponent<Rigidbody>();
   }
 
   // Start is called before the first frame update
   void Start() {
+    UserData.ScoreInfo highscore = UserData.Instance.savedData.getHighscore();
+    if (highscore != null) {
+      HighscoreText.text = $"Record: {highscore.name} - {highscore.score}";
+    }
+    score = 0;
     gameActive = true;
     remainingTime = maxTime;
     StartCoroutine(CountSeconds());
@@ -111,7 +119,7 @@ public class GameManager: MonoBehaviour {
       remainingTime--;
       TimeText.text = "Time: " + remainingTime;
     }
-    
+
     if (remainingTime == 0) {
       //Debug.Log("Game Over");
       GameOver();
@@ -119,6 +127,33 @@ public class GameManager: MonoBehaviour {
   }
 
   void GameOver() {
+    var currScore = new UserData.ScoreInfo() {
+      name = UserData.Instance.savedData.name,
+      score = score
+    };
+    var savedData = UserData.Instance.savedData;
+    var ranking = savedData.ranking;
+    bool changed = false;
+    if (ranking.Count < 3) { // Max scores to store.
+      ranking.Add(currScore);
+      changed = true;
+    }
+    else if (currScore.score > ranking[ranking.Count - 1].score) {
+      ranking[ranking.Count - 1] = currScore;
+      changed = true;
+    }
+
+    for (int i = ranking.Count - 1; i > 0 && ranking[i].score > ranking[i - 1].score; i--) {
+      Debug.Log(i + ". " + ranking[i].score);
+      var tmp = ranking[i];
+      ranking[i] = ranking[i - 1];
+      ranking[i - 1] = tmp;
+    }
+
+    if (changed) {
+      UserData.Instance.SaveData();
+    }
+
     gameActive = false;
     GameOverPanel.SetActive(true);
   }
@@ -132,5 +167,9 @@ public class GameManager: MonoBehaviour {
 
   public void Restart() {
     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+  }
+
+  public void GoToMainMenu() {
+    SceneManager.LoadScene(0);
   }
 }

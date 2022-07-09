@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Menu.unity
+    guid: 369f4b3173c5ff140a10f3cf264414e4
+  - enabled: 1
     path: Assets/Scenes/Football.unity
     guid: c237548c21a57894dae9921c31ea3055
+  - enabled: 1
+    path: Assets/Scenes/Ranking.unity
+    guid: e31408c0c2bc7c84b9fbd31c7a751c8d
   m_configObjects: {}
