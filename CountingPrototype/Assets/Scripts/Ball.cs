@@ -34,6 +34,7 @@ public class Ball: MonoBehaviour {
     }
   }
 
+  // ABSTRACTION
   public void Shot(float currentForceFactor, Vector3 targetPosition) {
     startForceFactor = currentForceFactor;
     isAvailable = false;

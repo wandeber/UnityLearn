@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 
 public class UserData: MonoBehaviour {
+  // ENCAPSULATION
   public static UserData Instance {get; private set;}
   public SavedData savedData;
 

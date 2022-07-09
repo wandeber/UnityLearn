@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameManager: MonoBehaviour {
+  // ENCAPSULATION
   public static GameManager Instance { get; private set; }
 
   [SerializeField] private float forceSelectorSpeed = 1f;
@@ -12,6 +13,7 @@ public class GameManager: MonoBehaviour {
   [SerializeField] private Ball ball;
   [SerializeField] private GameObject mouse;
   [SerializeField] private int maxTime;
+  [SerializeField] public Text ScoreText;
   [SerializeField] public Text TimeText;
   [SerializeField] public Text HighscoreText;
   [SerializeField] public GameObject GameOverPanel;
@@ -20,7 +22,20 @@ public class GameManager: MonoBehaviour {
   public float maxforceFactor = 1f;
   public float forceTarget;
   public float forceSource;
-  public int score = 0;
+  
+  // ENCAPSULATION
+  private int score = 0;
+  public int Score {
+    get { return score; }
+    set {
+      if (value < 0) {
+        Debug.LogError("Score should not be lower than 0.");
+        return;
+      }
+      score = value;
+      UpdateText();
+    }
+  }
 
   private int remainingTime;
   private Vector3 mousePosition;
@@ -45,7 +60,7 @@ public class GameManager: MonoBehaviour {
     if (highscore != null) {
       HighscoreText.text = $"Record: {highscore.name} - {highscore.score}";
     }
-    score = 0;
+    Score = 0;
     gameActive = true;
     remainingTime = maxTime;
     StartCoroutine(CountSeconds());
@@ -64,6 +79,10 @@ public class GameManager: MonoBehaviour {
       hForceSlider.value = currentForceFactor;
       //Debug.Log(currentForceFactor);
     }
+  }
+
+  void UpdateText() {
+    ScoreText.text = "Score: " + GameManager.Instance.Score;
   }
 
   void ToggleForceDirection() {
@@ -129,7 +148,7 @@ public class GameManager: MonoBehaviour {
   void GameOver() {
     var currScore = new UserData.ScoreInfo() {
       name = UserData.Instance.savedData.name,
-      score = score
+      score = Score
     };
     var savedData = UserData.Instance.savedData;
     var ranking = savedData.ranking;
